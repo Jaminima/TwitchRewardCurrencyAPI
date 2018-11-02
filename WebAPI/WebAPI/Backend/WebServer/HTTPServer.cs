@@ -12,8 +12,7 @@ namespace WebAPI.Backend.WebServer
         static HttpListener Listener = new HttpListener();
         public static void Start()
         {
-            Listener.Prefixes.Add("http://+:"+Data.ConfigHandler.Config["WebAPI"]["Port"]["HTTP"]+"/");
-            Listener.Prefixes.Add("https://+:"+ Data.ConfigHandler.Config["WebAPI"]["Port"]["HTTPS"] + "/");
+            Listener.Prefixes.Add("http://+:"+Data.ConfigHandler.Config["WebAPI"]["Port"]+"/");
             //MUST FIGURE OUT SSL
             Listener.Start();
             Listener.BeginGetContext(HandleRequest, null);
@@ -37,6 +36,7 @@ namespace WebAPI.Backend.WebServer
             else if (Context.Request.HttpMethod == "POST") { Post.Handler(Context,ref ResponseObject); }
             byte[] ByteResponseData = Encoding.UTF8.GetBytes(ResponseObject.ToJson().ToString());
             if (Context.Request.RawUrl.EndsWith("/favicon.ico")) { ByteResponseData = System.IO.File.ReadAllBytes("./icon.png"); }//Only visable on web browsers
+            if (Context.Request.RawUrl == "/") { ByteResponseData = System.IO.File.ReadAllBytes("index.html"); Response.ContentType = "text/html"; }
             Response.OutputStream.Write(ByteResponseData, 0, ByteResponseData.Length);
             Response.OutputStream.Close();
         }
