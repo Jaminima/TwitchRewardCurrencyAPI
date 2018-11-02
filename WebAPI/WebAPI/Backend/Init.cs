@@ -11,8 +11,7 @@ namespace WebAPI.Backend
         public static Data.SQL SQLi = new Data.SQL("./Database");
         public static void Start()
         {
-            //WebServer.HTTPServer.Start();
-            var Obj = Data.Objects.AuthToken.FromId(1);
+            WebServer.HTTPServer.Start();
             while (true) { Console.ReadLine(); }
         }
     }

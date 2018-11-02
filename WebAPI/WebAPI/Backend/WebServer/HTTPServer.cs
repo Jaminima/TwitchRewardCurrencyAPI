@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Net;
 
 namespace WebAPI.Backend.WebServer
@@ -12,32 +12,29 @@ namespace WebAPI.Backend.WebServer
         static HttpListener Listener = new HttpListener();
         public static void Start()
         {
-            Listener.Prefixes.Add("http://+:1234/");
-            Listener.Prefixes.Add("https://+:12345/");
+            Listener.Prefixes.Add("http://+:80/");
+            Listener.Prefixes.Add("https://+:81/");
             //MUST FIGURE OUT SSL
             Listener.Start();
             Listener.BeginGetContext(HandleRequest, null);
-        }
-        public static HttpListenerContext GetRequestData(IAsyncResult Request)
-        {
-            HttpListenerContext Data = Listener.EndGetContext(Request);
-            Listener.BeginGetContext(HandleRequest, null);
-            return Data;
+            Console.WriteLine("WebAPI Alive? "+Listener.IsListening);
         }
 
         public static void HandleRequest(IAsyncResult Request)
         {
-            HttpListenerContext RequestData = HTTPServer.GetRequestData(Request);
-            RecivedGET(RequestData);
+            new Thread(() => RequestThread(Listener.EndGetContext(Request))).Start();
+            Listener.BeginGetContext(HandleRequest, null);
         }
 
-        static void RecivedGET(HttpListenerContext RequestData)
+        public static void RequestThread(HttpListenerContext Context)
         {
-            HttpListenerResponse Response = RequestData.Response;
+            HttpListenerResponse Response = Context.Response;
             Response.StatusCode = 200;
             Response.ContentType = "application/json";
-            string ResponseData = RequestHandler.Handler(RequestData);
-            byte[] ByteResponseData = Encoding.UTF8.GetBytes(ResponseData);
+            ResponseObject ResponseObject=new ResponseObject();
+            if (Context.Request.HttpMethod == "GET") { Get.Handler(Context,ref ResponseObject); }
+            else if (Context.Request.HttpMethod == "POST") { Post.Handler(Context,ref ResponseObject); }
+            byte[] ByteResponseData = Encoding.UTF8.GetBytes(ResponseObject.ToJson().ToString());
             Response.OutputStream.Write(ByteResponseData, 0, ByteResponseData.Length);
             Response.OutputStream.Close();
         }

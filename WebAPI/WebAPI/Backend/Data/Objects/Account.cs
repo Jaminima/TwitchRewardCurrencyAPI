@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WebAPI.Backend.Data.Objects
 {
-    class Account
+    class Account:BaseObject
     {
         public uint AccountId;
         public uint Balance;
@@ -47,6 +47,23 @@ WHERE (((Account.AccountID)="+AccountId+@"));
             Account Account = FromId(AccountId);
             Account.User = null;
             return Account;
+        }
+
+        public static Account[] AllAccounts()
+        {
+            List<string[]> AData = Init.SQLi.ExecuteReader(@"SELECT Account.AccountID, Account.Balance, Account.UserID
+FROM Account
+ORDER BY Account.Balance DESC;
+");
+            List<Account> Accounts = new List<Account> { };
+            foreach (string[] sAccount in AData)
+            {
+                Account Account = new Account(uint.Parse(sAccount[0]));
+                Account.Balance = uint.Parse(sAccount[1]);
+                Account.User = User.FromIdChild(uint.Parse(sAccount[2]));
+                Accounts.Add(Account);
+            }
+            return Accounts.ToArray();
         }
 
     }

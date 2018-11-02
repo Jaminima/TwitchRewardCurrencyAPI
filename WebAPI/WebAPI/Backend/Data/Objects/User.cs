@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace WebAPI.Backend.Data.Objects
 {
-    class User
+    class User : BaseObject
     {
-        public uint UserId, TwitchId, DiscordId;
+        public uint UserId;
+        public string TwitchId, DiscordId;
         public Account Account;
 
         public User(uint Id) { UserId = Id; }
@@ -21,8 +22,8 @@ WHERE (((UserData.UserID)="+UserId+@"));
 ");
             if (UData.Count == 0) { return null; }
             User User = new User(UserId);
-            User.TwitchId = uint.Parse(UData[0][0]);
-            User.DiscordId = uint.Parse(UData[0][1]);
+            User.TwitchId = UData[0][0];
+            User.DiscordId = UData[0][1];
             User.Account = Account.FromUserId(User.UserId);
             return User;
         }
@@ -32,6 +33,23 @@ WHERE (((UserData.UserID)="+UserId+@"));
             User User = FromId(UserId);
             User.Account = null;
             return User;
+        }
+
+        public static User[] AllUsers()
+        {
+            List<String[]> UData = Init.SQLi.ExecuteReader(@"SELECT UserData.UserID, UserData.TwitchID, UserData.DiscordID
+FROM UserData;
+");
+            List<User> Users = new List<User> { };
+            foreach (String[] sUser in UData)
+            {
+                User User = new User(uint.Parse(sUser[0]));
+                User.TwitchId = sUser[1];
+                User.DiscordId = sUser[2];
+                User.Account = Account.FromUserId(User.UserId);
+                Users.Add(User);
+            }
+            return Users.ToArray();
         }
 
     }
