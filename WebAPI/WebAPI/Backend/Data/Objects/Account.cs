@@ -77,5 +77,12 @@ ORDER BY Account.Balance DESC;
             return Accounts.ToArray();
         }
 
+        public static void Update(Account Account)
+        {
+            Init.SQLi.Execute(@"UPDATE Account SET Account.Balance = "+Account.Balance+@"
+WHERE (((Account.AccountID)="+Account.AccountId+@"));
+");
+        }
+
     }
 }

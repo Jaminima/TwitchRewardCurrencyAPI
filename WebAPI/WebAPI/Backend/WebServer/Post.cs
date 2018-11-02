@@ -32,12 +32,41 @@ namespace WebAPI.Backend.WebServer
                 ResponseObject.Message = "Got User";
                 ResponseObject.Status = 200;
             }
+            else if (SegmentedURL[1] == "account" && SegmentedURL[2] == "give")
+            {
+                if (!Misc.TokenValid(Context,ref ResponseObject)) { return; }
+                try { int.Parse(SegmentedURL[3]); int.Parse(Context.Request.Headers["Value"]); } catch { ResponseObject.Message = "Invalid Parameter"; ResponseObject.Status = 500; return; }
+                Data.Objects.User User = Data.Objects.User.FromId(uint.Parse(SegmentedURL[3]));
+                if (User == null) { ResponseObject.Message = "User doesnt exist"; ResponseObject.Status = 405; return; }
+                User.Account.Balance += uint.Parse(Context.Request.Headers["Value"]);
+                Data.Objects.Account.Update(User.Account);
+                ResponseObject.Message = "Adjusted Users Balance"; ResponseObject.Status = 200;
+            }
+            else if (SegmentedURL[1] == "account" && SegmentedURL[2] == "take")
+            {
+                if (!Misc.TokenValid(Context, ref ResponseObject)) { return; }
+                try { int.Parse(SegmentedURL[3]); int.Parse(Context.Request.Headers["Value"]); } catch { ResponseObject.Message = "Invalid Parameter"; ResponseObject.Status = 500; return; }
+                Data.Objects.User User = Data.Objects.User.FromId(uint.Parse(SegmentedURL[3]));
+                if (User == null) { ResponseObject.Message = "User doesnt exist"; ResponseObject.Status = 405; return; }
+                uint ChangeBy = uint.Parse(Context.Request.Headers["Value"]);
+                if (User.Account.Balance < ChangeBy) { ResponseObject.Message = "Insufficient Balance"; ResponseObject.Status = 205; return; }
+                User.Account.Balance -= ChangeBy;
+                Data.Objects.Account.Update(User.Account);
+                ResponseObject.Message = "Adjusted Users Balance"; ResponseObject.Status = 200;
+            }
+            else if (SegmentedURL[1] == "account" && SegmentedURL[2] == "set")
+            {
+                if (!Misc.TokenValid(Context, ref ResponseObject)) { return; }
+                try { int.Parse(SegmentedURL[3]); int.Parse(Context.Request.Headers["Value"]); } catch { ResponseObject.Message = "Invalid Parameter"; ResponseObject.Status = 500; return; }
+                Data.Objects.User User = Data.Objects.User.FromId(uint.Parse(SegmentedURL[3]));
+                if (User == null) { ResponseObject.Message = "User doesnt exist"; ResponseObject.Status = 405; return; }
+                User.Account.Balance = uint.Parse(Context.Request.Headers["Value"]);
+                Data.Objects.Account.Update(User.Account);
+                ResponseObject.Message = "Set Users Balance"; ResponseObject.Status = 200;
+            }
             else if (SegmentedURL[1] == "auth" && SegmentedURL[2] == "check")
             {
-                if (Data.Objects.AuthToken.AuthTokenExists(Context.Request.Headers["AuthToken"]))
-                { ResponseObject.Message = "Token Is Valid"; ResponseObject.Status = 200; }
-                else
-                { ResponseObject.Message = "Token Is InValid"; ResponseObject.Status = 500; }
+                Misc.TokenValid(Context,ref ResponseObject);
             }
             else { ResponseObject.Message = "Path Not Found"; ResponseObject.Status = 404; }
         }

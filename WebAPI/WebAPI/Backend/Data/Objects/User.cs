@@ -92,5 +92,12 @@ WHERE (((UserData.UserID)="+Id+@")) OR (((UserData.TwitchID)='"+TwitchId+@"')) O
             return UData.Count != 0;
         }
 
+        public static void Update(User User)
+        {
+            Init.SQLi.Execute(@"UPDATE UserData SET UserData.TwitchID = '"+User.TwitchId+@"', UserData.DiscordID = '"+User.DiscordId+@"'
+WHERE(((UserData.UserID) = "+User.UserId+@"));
+");
+        }
+
     }
 }

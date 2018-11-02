@@ -59,6 +59,7 @@
     <Compile Include="Backend\Init.cs" />
     <Compile Include="Backend\WebServer\HTTPServer.cs" />
     <Compile Include="Backend\WebServer\Get.cs" />
+    <Compile Include="Backend\WebServer\Misc.cs" />
     <Compile Include="Backend\WebServer\Post.cs" />
     <Compile Include="Backend\WebServer\ResponseObject.cs" />
     <Compile Include="Program.cs" />
