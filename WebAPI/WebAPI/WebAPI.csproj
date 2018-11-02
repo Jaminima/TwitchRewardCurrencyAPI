@@ -46,8 +46,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Backend\Data\DataTypes.cs" />
-    <Compile Include="Backend\Data\Get.cs" />
+    <Compile Include="Backend\Data\Objects\Account.cs" />
+    <Compile Include="Backend\Data\Objects\AuthToken.cs" />
+    <Compile Include="Backend\Data\Objects\DataTypes.cs" />
+    <Compile Include="Backend\Data\Objects\User.cs" />
     <Compile Include="Backend\Data\SQL.cs" />
     <Compile Include="Backend\Init.cs" />
     <Compile Include="Backend\WebServer\HTTPServer.cs" />

@@ -12,7 +12,7 @@ namespace WebAPI.Backend
         public static void Start()
         {
             //WebServer.HTTPServer.Start();
-            Console.WriteLine(Data.Get.GetBalance("1",Data.IDType.UserID));
+            var Obj = Data.Objects.AuthToken.FromId(1);
             while (true) { Console.ReadLine(); }
         }
     }
