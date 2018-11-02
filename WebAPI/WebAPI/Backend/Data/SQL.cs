@@ -42,7 +42,7 @@ namespace WebAPI.Backend.Data
         public void Execute(String sCommand)
         {
             OleDbCommand Command = new OleDbCommand(sCommand, Conn);
-            try { Command.ExecuteNonQuery(); RestartConn(); } catch (Exception E) { Console.WriteLine(E); }
+            try { Command.ExecuteNonQuery(); /*RestartConn();*/ } catch (Exception E) { Console.WriteLine(E); }
         }
     }
 }

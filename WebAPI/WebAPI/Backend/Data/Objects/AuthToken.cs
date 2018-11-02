@@ -23,7 +23,7 @@ namespace WebAPI.Backend.Data.Objects
 
         public static AuthToken FromId(uint TokenId)
         {
-            List<String[]> TData = Init.SQLi.ExecuteReader(@"SELECT AuthTokens.AuthToken, AuthTokens.UserID
+            List<String[]> TData = Init.SQLi.ExecuteReader(@"SELECT AuthTokens.AuthToken
 FROM AuthTokens
 WHERE (((AuthTokens.AuthTokenID)="+TokenId+@"));
 ");
@@ -32,5 +32,15 @@ WHERE (((AuthTokens.AuthTokenID)="+TokenId+@"));
             AuthToken.Token = TData[0][0];
             return AuthToken;
         }
+
+        public static bool AuthTokenExists(string Token)
+        {
+            List<String[]> TData = Init.SQLi.ExecuteReader(@"SELECT AuthTokens.AuthTokenID
+FROM AuthTokens
+WHERE (((AuthTokens.AuthToken)='" + Token + @"'));
+");
+            return TData.Count != 0;
+        }
+
     }
 }

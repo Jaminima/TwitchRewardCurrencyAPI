@@ -11,6 +11,7 @@ namespace WebAPI.Backend
         public static Data.SQL SQLi = new Data.SQL("./Database");
         public static void Start()
         {
+            Data.ConfigHandler.LoadConfig();
             WebServer.HTTPServer.Start();
             while (true) { Console.ReadLine(); }
         }

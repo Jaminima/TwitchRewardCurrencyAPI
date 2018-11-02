@@ -49,6 +49,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Backend\Data\ConfigHandler.cs" />
     <Compile Include="Backend\Data\Objects\Account.cs" />
     <Compile Include="Backend\Data\Objects\AuthToken.cs" />
     <Compile Include="Backend\Data\Objects\BaseObject.cs" />

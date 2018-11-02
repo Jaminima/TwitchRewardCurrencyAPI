@@ -83,5 +83,14 @@ FROM UserData;
             return Users.ToArray();
         }
 
+        public static bool UserExists(string TwitchId="",string DiscordId="",uint Id=0)
+        {
+            List<String[]> UData = Init.SQLi.ExecuteReader(@"SELECT UserData.UserID, UserData.TwitchID, UserData.DiscordID
+FROM UserData
+WHERE (((UserData.UserID)="+Id+@")) OR (((UserData.TwitchID)='"+TwitchId+@"')) OR (((UserData.DiscordID)='"+DiscordId+@"'));"
+);
+            return UData.Count != 0;
+        }
+
     }
 }

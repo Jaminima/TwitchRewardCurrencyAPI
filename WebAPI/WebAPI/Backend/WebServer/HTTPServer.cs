@@ -12,8 +12,8 @@ namespace WebAPI.Backend.WebServer
         static HttpListener Listener = new HttpListener();
         public static void Start()
         {
-            Listener.Prefixes.Add("http://+:80/");
-            Listener.Prefixes.Add("https://+:81/");
+            Listener.Prefixes.Add("http://+:"+Data.ConfigHandler.Config["WebAPI"]["Port"]["HTTP"]+"/");
+            Listener.Prefixes.Add("https://+:"+ Data.ConfigHandler.Config["WebAPI"]["Port"]["HTTPS"] + "/");
             //MUST FIGURE OUT SSL
             Listener.Start();
             Listener.BeginGetContext(HandleRequest, null);
