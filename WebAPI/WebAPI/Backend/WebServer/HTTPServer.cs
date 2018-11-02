@@ -28,6 +28,7 @@ namespace WebAPI.Backend.WebServer
 
         public static void RequestThread(HttpListenerContext Context)
         {
+            Console.WriteLine(Context.Request.RemoteEndPoint + " Visited " + Context.Request.RawUrl + " Using " + Context.Request.HttpMethod);
             HttpListenerResponse Response = Context.Response;
             Response.StatusCode = 200;
             Response.ContentType = "application/json";
@@ -35,6 +36,7 @@ namespace WebAPI.Backend.WebServer
             if (Context.Request.HttpMethod == "GET") { Get.Handler(Context,ref ResponseObject); }
             else if (Context.Request.HttpMethod == "POST") { Post.Handler(Context,ref ResponseObject); }
             byte[] ByteResponseData = Encoding.UTF8.GetBytes(ResponseObject.ToJson().ToString());
+            if (Context.Request.RawUrl.EndsWith("/favicon.ico")) { ByteResponseData = System.IO.File.ReadAllBytes("./icon.png"); }//Only visable on web browsers
             Response.OutputStream.Write(ByteResponseData, 0, ByteResponseData.Length);
             Response.OutputStream.Close();
         }

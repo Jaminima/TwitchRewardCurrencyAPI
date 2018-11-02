@@ -6,6 +6,19 @@ using System.Threading.Tasks;
 
 namespace WebAPI.Backend.Data.Objects
 {
+    class NewUser : BaseObject
+    {
+        public string TwitchId, DiscordId;
+
+        public static void Save(NewUser NewUser)
+        {
+            Init.SQLi.Execute(@"INSERT INTO UserData (TwitchID,DiscordID) VALUES ('"+NewUser.TwitchId+@"','"+NewUser.DiscordId+@"')");
+            NewAccount NewAccount = new NewAccount();
+            NewAccount.Balance = 0; NewAccount.User = User.FromNewUser(NewUser);
+            NewAccount.Save(NewAccount);
+        }
+    }
+
     class User : BaseObject
     {
         public uint UserId;
@@ -13,6 +26,24 @@ namespace WebAPI.Backend.Data.Objects
         public Account Account;
 
         public User(uint Id) { UserId = Id; }
+
+        public static User FromNewUser(NewUser NewUser)
+        {
+            string WhereString = "";
+            if (NewUser.TwitchId != null) { WhereString += @"((UserData.TwitchID) = '" + NewUser.TwitchId + @"')"; }
+            if (NewUser.TwitchId != null && NewUser.DiscordId != null) { WhereString += " AND "; }
+            if (NewUser.DiscordId != null) { WhereString += @"((UserData.DiscordID)='" + NewUser.DiscordId + @"')"; }
+            List<String[]> UData = Init.SQLi.ExecuteReader(@"SELECT UserData.UserID
+FROM UserData
+WHERE ( "+WhereString+@" );
+");
+            if (UData.Count == 0) { return null; }
+            User User = new User(uint.Parse(UData[0][0]));
+            User.TwitchId = NewUser.TwitchId;
+            User.DiscordId = NewUser.DiscordId;
+            User.Account = Account.FromUserId(User.UserId);
+            return User;
+        }
 
         public static User FromId(uint UserId)
         {

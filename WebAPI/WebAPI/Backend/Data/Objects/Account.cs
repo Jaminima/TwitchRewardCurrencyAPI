@@ -6,6 +6,17 @@ using System.Threading.Tasks;
 
 namespace WebAPI.Backend.Data.Objects
 {
+    class NewAccount : BaseObject
+    {
+        public uint Balance;
+        public User User;
+
+        public static void Save(NewAccount NewAccount)
+        {
+            Init.SQLi.Execute(@"INSERT INTO Account (Balance,UserID) VALUES (0,"+NewAccount.User.UserId+@");");
+        }
+    }
+
     class Account:BaseObject
     {
         public uint AccountId;
