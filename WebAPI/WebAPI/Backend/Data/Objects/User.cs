@@ -33,14 +33,14 @@ namespace WebAPI.Backend.Data.Objects
             if (NewUser.TwitchId != null) { WhereString += @"((UserData.TwitchID) = '" + NewUser.TwitchId + @"')"; }
             if (NewUser.TwitchId != null && NewUser.DiscordId != null) { WhereString += " AND "; }
             if (NewUser.DiscordId != null) { WhereString += @"((UserData.DiscordID)='" + NewUser.DiscordId + @"')"; }
-            List<String[]> UData = Init.SQLi.ExecuteReader(@"SELECT UserData.UserID
+            List<String[]> UData = Init.SQLi.ExecuteReader(@"SELECT UserData.UserID,UserData.TwitchID,UserData.DiscordID
 FROM UserData
-WHERE ( "+WhereString+@" );
+WHERE ( " + WhereString+@" );
 ");
             if (UData.Count == 0) { return null; }
             User User = new User(uint.Parse(UData[0][0]));
-            User.TwitchId = NewUser.TwitchId;
-            User.DiscordId = NewUser.DiscordId;
+            User.TwitchId = UData[0][1];
+            User.DiscordId = UData[0][2];
             User.Account = Account.FromUserId(User.UserId);
             return User;
         }

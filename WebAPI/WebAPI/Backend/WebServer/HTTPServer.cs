@@ -37,8 +37,12 @@ namespace WebAPI.Backend.WebServer
             byte[] ByteResponseData = Encoding.UTF8.GetBytes(ResponseObject.ToJson().ToString());
             if (Context.Request.RawUrl.EndsWith("/favicon.ico")) { ByteResponseData = System.IO.File.ReadAllBytes("./icon.png"); }//Only visable on web browsers
             if (Context.Request.RawUrl == "/") { ByteResponseData = System.IO.File.ReadAllBytes("index.html"); Response.ContentType = "text/html"; }
-            Response.OutputStream.Write(ByteResponseData, 0, ByteResponseData.Length);
-            Response.OutputStream.Close();
+            try
+            {
+                Response.OutputStream.Write(ByteResponseData, 0, ByteResponseData.Length);
+                Response.OutputStream.Close();
+            }
+            catch { Console.WriteLine("Unable to send response too "+ Context.Request.RemoteEndPoint); }
         }
     }
 }
