@@ -34,10 +34,22 @@ namespace WebAPI.Backend.WebServer
             }
             else if (SegmentedURL[1] == "update" && SegmentedURL[2] == "user")
             {
+                if (!Misc.TokenValid(Context, ref ResponseObject)) { return; }
                 string StreamString = new System.IO.StreamReader(Context.Request.InputStream).ReadToEnd();
                 Newtonsoft.Json.Linq.JToken User = Newtonsoft.Json.Linq.JToken.Parse(StreamString);
                 Data.Objects.User.Update(User.ToObject<Data.Objects.User>());
                 ResponseObject.Message = "Updated User";
+                ResponseObject.Status = 200;
+            }
+            else if (SegmentedURL[1] == "delete" && SegmentedURL[2] == "user")
+            {
+                if (SegmentedURL.Length != 4) { ResponseObject.Message = "Missing Parameter"; ResponseObject.Status = 401; return; }
+                try { int.Parse(SegmentedURL[3]); } catch { ResponseObject.Message = "Invalid Parameter"; ResponseObject.Status = 500; return; }
+                Data.Objects.User User = Data.Objects.User.FromId(uint.Parse(SegmentedURL[3]));
+                if (User == null) { ResponseObject.Message = "User doesnt exist"; ResponseObject.Status = 405; return; }
+                Data.Objects.User.Delete(User);
+                ResponseObject.Data = User.ToJson();
+                ResponseObject.Message = "Deleted User";
                 ResponseObject.Status = 200;
             }
             else if (SegmentedURL[1] == "account" && SegmentedURL[2] == "give")

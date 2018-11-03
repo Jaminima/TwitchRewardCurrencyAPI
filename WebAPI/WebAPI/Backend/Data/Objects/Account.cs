@@ -84,5 +84,13 @@ WHERE (((Account.AccountID)="+Account.AccountId+@"));
 ");
         }
 
+        public static void Delete(Account Account)
+        {
+            Init.SQLi.Execute(@"DELETE Account.AccountID
+FROM Account
+WHERE (((Account.AccountID)="+Account.AccountId+@"));
+");
+        }
+
     }
 }

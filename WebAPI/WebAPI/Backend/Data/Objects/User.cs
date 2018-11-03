@@ -87,7 +87,7 @@ FROM UserData;
         {
             List<String[]> UData = Init.SQLi.ExecuteReader(@"SELECT UserData.UserID, UserData.TwitchID, UserData.DiscordID
 FROM UserData
-WHERE (((UserData.UserID)="+Id+@")) OR (((UserData.TwitchID)='"+TwitchId+@"')) OR (((UserData.DiscordID)='"+DiscordId+@"'));"
+WHERE (((UserData.UserID)="+Id+@")) AND (((UserData.TwitchID)='"+TwitchId+@"')) AND (((UserData.DiscordID)='"+DiscordId+@"'));"
 );
             return UData.Count != 0;
         }
@@ -96,6 +96,14 @@ WHERE (((UserData.UserID)="+Id+@")) OR (((UserData.TwitchID)='"+TwitchId+@"')) O
         {
             Init.SQLi.Execute(@"UPDATE UserData SET UserData.TwitchID = '"+User.TwitchId+@"', UserData.DiscordID = '"+User.DiscordId+@"'
 WHERE(((UserData.UserID) = "+User.UserId+@"));
+");
+        }
+
+        public static void Delete(User User)
+        {
+            Init.SQLi.Execute(@"DELETE UserData.UserID
+FROM UserData
+WHERE (((UserData.UserID)=" + User.UserId + @"));
 ");
         }
 
