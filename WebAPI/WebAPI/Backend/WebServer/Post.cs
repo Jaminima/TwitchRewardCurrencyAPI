@@ -32,6 +32,14 @@ namespace WebAPI.Backend.WebServer
                 ResponseObject.Message = "Got User";
                 ResponseObject.Status = 200;
             }
+            else if (SegmentedURL[1] == "update" && SegmentedURL[2] == "user")
+            {
+                string StreamString = new System.IO.StreamReader(Context.Request.InputStream).ReadToEnd();
+                Newtonsoft.Json.Linq.JToken User = Newtonsoft.Json.Linq.JToken.Parse(StreamString);
+                Data.Objects.User.Update(User.ToObject<Data.Objects.User>());
+                ResponseObject.Message = "Updated User";
+                ResponseObject.Status = 200;
+            }
             else if (SegmentedURL[1] == "account" && SegmentedURL[2] == "give")
             {
                 if (!Misc.TokenValid(Context,ref ResponseObject)) { return; }
