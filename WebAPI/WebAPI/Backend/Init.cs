@@ -13,7 +13,11 @@ namespace WebAPI.Backend
         {
             Data.ConfigHandler.LoadConfig();
             WebServer.HTTPServer.Start();
-            while (true) { Console.ReadLine(); }
+            while (true)
+            {
+                string Command=Console.ReadLine().ToLower();
+                if (Command == "clear") { Console.Clear(); }
+            }
         }
     }
 }
