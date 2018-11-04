@@ -27,7 +27,9 @@ namespace WebAPI.Backend.WebServer
 
         public static void RequestThread(HttpListenerContext Context)
         {
-            Console.WriteLine(Context.Request.RemoteEndPoint + " Visited " + Context.Request.RawUrl + " Using " + Context.Request.HttpMethod);
+            string Event = Context.Request.RemoteEndPoint + " Visited " + Context.Request.RawUrl + " Using " + Context.Request.HttpMethod;
+            Console.WriteLine(Event);
+            Log.AppendToLog(Event);
             HttpListenerResponse Response = Context.Response;
             Response.StatusCode = 200;
             Response.ContentType = "application/json";

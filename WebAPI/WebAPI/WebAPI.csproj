@@ -57,6 +57,7 @@
     <Compile Include="Backend\Data\Objects\User.cs" />
     <Compile Include="Backend\Data\SQL.cs" />
     <Compile Include="Backend\Init.cs" />
+    <Compile Include="Backend\Log.cs" />
     <Compile Include="Backend\WebServer\HTTPServer.cs" />
     <Compile Include="Backend\WebServer\Get.cs" />
     <Compile Include="Backend\WebServer\Misc.cs" />

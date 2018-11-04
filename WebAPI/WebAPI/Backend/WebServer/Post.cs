@@ -88,6 +88,12 @@ namespace WebAPI.Backend.WebServer
             {
                 Misc.TokenValid(Context,ref ResponseObject);
             }
+            else if (SegmentedURL[1] == "log")
+            {
+                if (!Misc.TokenValid(Context, ref ResponseObject)) { return; }
+                ResponseObject.Message = "Read Log"; ResponseObject.Status = 200;
+                ResponseObject.Data = System.IO.File.ReadAllText("./Log.txt");
+            }
             else { ResponseObject.Message = "Path Not Found"; ResponseObject.Status = 404; }
         }
     }
