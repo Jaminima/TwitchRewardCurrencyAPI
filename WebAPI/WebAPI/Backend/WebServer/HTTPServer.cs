@@ -37,8 +37,14 @@ namespace WebAPI.Backend.WebServer
             if (Context.Request.HttpMethod == "GET") { Get.Handler(Context,ref ResponseObject); }
             else if (Context.Request.HttpMethod == "POST") { Post.Handler(Context,ref ResponseObject); }
             byte[] ByteResponseData = Encoding.UTF8.GetBytes(ResponseObject.ToJson().ToString());
-            if (Context.Request.RawUrl.EndsWith("/favicon.ico")) { ByteResponseData = System.IO.File.ReadAllBytes("./icon.png"); }//Only visable on web browsers
-            if (Context.Request.RawUrl == "/") { ByteResponseData = System.IO.File.ReadAllBytes("index.html"); Response.ContentType = "text/html"; }
+            try
+            {
+                if (Context.Request.RawUrl.EndsWith("/favicon.ico")) { ByteResponseData = System.IO.File.ReadAllBytes("./site/icon.png"); }//Only visable on web browsers
+                if (Context.Request.RawUrl == "/") { ByteResponseData = System.IO.File.ReadAllBytes("./site/index.html"); Response.ContentType = "text/html"; }
+                if (Context.Request.RawUrl.EndsWith(".html") || Context.Request.RawUrl.EndsWith(".js") || Context.Request.RawUrl.EndsWith(".png")) { ByteResponseData = System.IO.File.ReadAllBytes("./site" + Context.Request.RawUrl); Response.ContentType = "text/html"; }
+                if (Context.Request.RawUrl.EndsWith(".css")) { ByteResponseData = System.IO.File.ReadAllBytes("./site" + Context.Request.RawUrl); Response.ContentType = "text/css"; }
+            }
+            catch { Encoding.UTF8.GetBytes("HMS fucked"); }
             try
             {
                 Response.OutputStream.Write(ByteResponseData, 0, ByteResponseData.Length);
