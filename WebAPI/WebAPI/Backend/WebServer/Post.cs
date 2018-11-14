@@ -14,6 +14,7 @@ namespace WebAPI.Backend.WebServer
             string[] SegmentedURL = Context.Request.RawUrl.Split("/".ToCharArray());
             if (SegmentedURL[1] == "create" && SegmentedURL[2] == "user")
             {
+                if (!Misc.TokenValid(Context, ref ResponseObject)) { return; }
                 Data.Objects.NewUser NewUser = new Data.Objects.NewUser();
                 NewUser.DiscordId = Context.Request.Headers["DiscordId"];
                 NewUser.TwitchId = Context.Request.Headers["TwitchId"];
