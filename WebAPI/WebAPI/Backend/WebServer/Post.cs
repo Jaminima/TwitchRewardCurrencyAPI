@@ -89,6 +89,12 @@ namespace WebAPI.Backend.WebServer
             {
                 Misc.TokenValid(Context,ref ResponseObject);
             }
+            else if (SegmentedURL[1] == "auth" && SegmentedURL[2] == "token")
+            {
+                Data.Objects.AuthToken AuthToken = Data.Objects.AuthToken.FromRefreshToken(Context.Request.Headers["RefreshToken"]);
+                if (AuthToken != null) { ResponseObject.Data = AuthToken.ToJson(); ResponseObject.Message = "Succesfully performed 0Auth";ResponseObject.Status = 200; }
+                else { ResponseObject.Message = "That RefreshToken isnt valid"; ResponseObject.Status = 400; }
+            }
             else if (SegmentedURL[1] == "log")
             {
                 if (!Misc.TokenValid(Context, ref ResponseObject)) { return; }

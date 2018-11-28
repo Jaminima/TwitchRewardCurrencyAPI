@@ -11,7 +11,7 @@ namespace WebAPI.Backend.WebServer
     {
         public static bool TokenValid(HttpListenerContext Context, ref ResponseObject ResponseObject)
         {
-            if (Data.Objects.AuthToken.AuthTokenExists(Context.Request.Headers["AuthToken"]))
+            if (Data.Objects.AuthToken.AuthTokenValid(Context.Request.Headers["AuthorizationToken"]))
             { ResponseObject.Message = "Token Is Valid"; ResponseObject.Status = 200; return true; }
             else
             { ResponseObject.Message = "Token Is InValid"; ResponseObject.Status = 500; return false; }

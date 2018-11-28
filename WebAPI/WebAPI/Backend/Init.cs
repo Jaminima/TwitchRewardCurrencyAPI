@@ -9,6 +9,7 @@ namespace WebAPI.Backend
     public static class Init
     {
         public static Data.SQL SQLi = new Data.SQL("./Database");
+        public static Random Rnd = new Random();
         public static void Start()
         {
             Data.ConfigHandler.LoadConfig();
