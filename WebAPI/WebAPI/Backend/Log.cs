@@ -8,9 +8,14 @@ namespace WebAPI.Backend
 {
     public static class Log
     {
+        //static DateTime LastUpdated = DateTime.Now;
         public static void AppendToLog(string Text)
         {
-            //System.IO.File.AppendAllText("./Log.txt","\n"+Text);
+            //if ((int)((TimeSpan)(DateTime.Now - LastUpdated)).TotalSeconds > 30)
+            //{
+            //    System.IO.File.AppendAllText("./Log.txt", "\n" + Text);
+            //    LastUpdated = DateTime.Now;
+            //}
         }
     }
 }
