@@ -35,7 +35,7 @@ namespace WebAPI.Backend.WebServer
             ResponseObject ResponseObject=new ResponseObject(); // Create an instance of ResponseObject, which will be the main container for the data we will respond with
             if (Context.Request.HttpMethod == "GET") { Get.Handler(Context,ref ResponseObject); } // Run the Handler, that corresponds to the given method
             else if (Context.Request.HttpMethod == "POST") { Post.Handler(Context,ref ResponseObject); }
-            byte[] ByteResponseData = Encoding.UTF8.GetBytes(ResponseObject.ToJson().ToString()); // Convert the ResponseObject to JSOn and then to a Byte array
+            byte[] ByteResponseData = Encoding.UTF8.GetBytes(ResponseObject.ToJson().ToString()); // Convert the ResponseObject to JSON and then to a Byte array
             try // Attempt to send the Response
             {
                 Response.OutputStream.Write(ByteResponseData, 0, ByteResponseData.Length);

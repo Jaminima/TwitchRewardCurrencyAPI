@@ -9,7 +9,7 @@ namespace WebAPI.Backend.Data.Objects
     class NewUser : BaseObject
     {
         // NewUser does not have an UserId as it is not at reference to an item in the database
-        public string TwitchId, DiscordId;
+        public string TwitchId, DiscordId; // Create propertys to replicate the tables collumns
 
         public static void Save(NewUser NewUser)
         {
@@ -22,7 +22,7 @@ namespace WebAPI.Backend.Data.Objects
 
     class User : BaseObject
     {
-        public uint UserId;
+        public uint UserId; // Create propertys to replicate the tables collumns
         public string TwitchId, DiscordId;
         public Account Account;
 
@@ -31,15 +31,15 @@ namespace WebAPI.Backend.Data.Objects
         public static User FromNewUser(NewUser NewUser)
         {
             string WhereString = "";
-            if (NewUser.TwitchId != null) { WhereString += @"((UserData.TwitchID) = '" + NewUser.TwitchId + @"')"; }
-            if (NewUser.TwitchId != null && NewUser.DiscordId != null) { WhereString += " AND "; }
+            if (NewUser.TwitchId != null) { WhereString += @"((UserData.TwitchID) = '" + NewUser.TwitchId + @"')"; } // The Where statment must change based on if we have one or both of the Discord/Twitch ids
+            if (NewUser.TwitchId != null && NewUser.DiscordId != null) { WhereString += " AND "; } // As we need it to only return data where both match, if both are given
             if (NewUser.DiscordId != null) { WhereString += @"((UserData.DiscordID)='" + NewUser.DiscordId + @"')"; }
             List<String[]> UData = Init.SQLi.ExecuteReader(@"SELECT UserData.UserID,UserData.TwitchID,UserData.DiscordID
 FROM UserData
 WHERE ( " + WhereString+@" );
-");
-            if (UData.Count == 0) { return null; }
-            User User = new User(uint.Parse(UData[0][0]));
+"); // Select User details where the previoulsy defined where statment applies
+            if (UData.Count == 0) { return null; } // Check if we have a result
+            User User = new User(uint.Parse(UData[0][0])); // Put the selected data into a new User object
             User.TwitchId = UData[0][1];
             User.DiscordId = UData[0][2];
             User.Account = Account.FromUserId(User.UserId);
@@ -51,9 +51,9 @@ WHERE ( " + WhereString+@" );
             List<String[]> UData = Init.SQLi.ExecuteReader(@"SELECT UserData.TwitchID, UserData.DiscordID
 FROM UserData
 WHERE (((UserData.UserID)="+UserId+@"));
-");
+"); // Select User details where the UserID matches
             if (UData.Count == 0) { return null; }
-            User User = new User(UserId);
+            User User = new User(UserId); // Put the selected data into a new Account object
             User.TwitchId = UData[0][0];
             User.DiscordId = UData[0][1];
             User.Account = Account.FromUserId(User.UserId);
@@ -71,15 +71,15 @@ WHERE (((UserData.UserID)="+UserId+@"));
         {
             List<String[]> UData = Init.SQLi.ExecuteReader(@"SELECT UserData.UserID, UserData.TwitchID, UserData.DiscordID
 FROM UserData;
-");
+"); // Select All User details
             List<User> Users = new List<User> { };
             foreach (String[] sUser in UData)
             {
-                User User = new User(uint.Parse(sUser[0]));
+                User User = new User(uint.Parse(sUser[0])); // Put the selected data into a new Account object
                 User.TwitchId = sUser[1];
                 User.DiscordId = sUser[2];
                 User.Account = Account.FromUserId(User.UserId);
-                Users.Add(User);
+                Users.Add(User); // Add User object into the List
             }
             return Users.ToArray();
         }

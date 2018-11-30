@@ -8,7 +8,7 @@ namespace WebAPI.Backend.Data.Objects
 {
     class AuthToken : BaseObject
     {
-        public uint TokenId;
+        public uint TokenId; // Create propertys to replicate the tables collumns
         public string RefreshToken,AuthorizationToken;
         public DateTime AuthorizationTokenCreated;
 
@@ -23,9 +23,9 @@ namespace WebAPI.Backend.Data.Objects
             List<String[]> TData = Init.SQLi.ExecuteReader(@"SELECT AuthTokens.AuthTokenID, AuthTokens.RefreshToken, AuthTokens.AuthToken, AuthTokens.AuthTokenCreated
 FROM AuthTokens
 WHERE (((AuthTokens.AuthTokenID)="+TokenId+@"));
-");
-            if (TData.Count == 0) { return null; }
-            AuthToken AuthToken = new AuthToken(TokenId);
+"); // Select AuthToken information where the Id matches
+            if (TData.Count == 0) { return null; } // Check if we have a result
+            AuthToken AuthToken = new AuthToken(TokenId); // Put the selected data into a new AuthToken object
             AuthToken.RefreshToken = TData[0][1];
             AuthToken.AuthorizationToken = TData[0][2];
             try { AuthToken.AuthorizationTokenCreated = DateTime.Parse(TData[0][3]); } catch { }
@@ -37,9 +37,9 @@ WHERE (((AuthTokens.AuthTokenID)="+TokenId+@"));
             List<String[]> TData = Init.SQLi.ExecuteReader(@"SELECT AuthTokens.AuthTokenID, AuthTokens.RefreshToken, AuthTokens.AuthToken, AuthTokens.AuthTokenCreated
 FROM AuthTokens
 WHERE (((AuthTokens.RefreshToken)='" + RefreshToken + @"'));
-");
-            if (TData.Count == 0) { return null; }
-            AuthToken AuthToken = new AuthToken(uint.Parse(TData[0][0]));
+"); // Select AuthToken information where RefreshToken matches
+            if (TData.Count == 0) { return null; } // Check if we have a result
+            AuthToken AuthToken = new AuthToken(uint.Parse(TData[0][0])); // Put the selected data into a new AuthToken object
             AuthToken.RefreshToken = TData[0][1];
             Update(AuthToken);
             return FromId(AuthToken.TokenId);
@@ -50,13 +50,13 @@ WHERE (((AuthTokens.RefreshToken)='" + RefreshToken + @"'));
             List<String[]> TData = Init.SQLi.ExecuteReader(@"SELECT AuthTokens.AuthTokenID, AuthTokens.RefreshToken, AuthTokens.AuthToken, AuthTokens.AuthTokenCreated
 FROM AuthTokens
 WHERE (((AuthTokens.AuthToken)='"+AuthorizationToken+@"'));
-");
-            if (TData.Count == 0) { return false; }
-            AuthToken AuthToken = new AuthToken(uint.Parse(TData[0][0]));
+"); // Select AuthToken information where AuthToken matches
+            if (TData.Count == 0) { return false; } // Check if we have a result
+            AuthToken AuthToken = new AuthToken(uint.Parse(TData[0][0])); // Put the selected data into a new AuthToken object
             AuthToken.AuthorizationToken = TData[0][2];
             try { AuthToken.AuthorizationTokenCreated = DateTime.Parse(TData[0][3]); }
             catch { return false; }
-            if ((int)((TimeSpan)(DateTime.Now - AuthToken.AuthorizationTokenCreated)).TotalMinutes < 10) { return true; }
+            if ((int)((TimeSpan)(DateTime.Now - AuthToken.AuthorizationTokenCreated)).TotalMinutes < 10) { return true; } // check if the authoken was created in the last 10 mins
             else { return false; }
         }
 
@@ -72,7 +72,7 @@ WHERE(((AuthTokens.AuthTokenID) = "+AuthToken.TokenId+@"));
         static string RandomString(int Length)
         {
             string String = "";
-            for (int i = 0; i < Length; i++) { String += Alphabet[Init.Rnd.Next(0, Alphabet.Length)]; }
+            for (int i = 0; i < Length; i++) { String += Alphabet[Init.Rnd.Next(0, Alphabet.Length)]; } // Iterate from 0 to length, populating the String as we go
             return String;
         }
 

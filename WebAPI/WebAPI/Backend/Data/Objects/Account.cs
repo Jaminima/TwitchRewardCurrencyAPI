@@ -9,7 +9,7 @@ namespace WebAPI.Backend.Data.Objects
     class NewAccount : BaseObject
     {
         // NewAccount does not have an AccountId as it is not at reference to an item in the database
-        public uint Balance;
+        public uint Balance; // Create propertys to replicate the tables collumns
         public User User;
 
         public static void Save(NewAccount NewAccount)
@@ -20,7 +20,7 @@ namespace WebAPI.Backend.Data.Objects
 
     class Account:BaseObject
     {
-        public uint AccountId;
+        public uint AccountId; // Create propertys to replicate the tables collumns
         public uint Balance;
         public User User;
 
@@ -34,9 +34,9 @@ namespace WebAPI.Backend.Data.Objects
             List<string[]> AData = Init.SQLi.ExecuteReader(@"SELECT Account.Balance, Account.AccountID
 FROM Account
 WHERE (((Account.UserID)=" + UserId + @"));
-");
-            if (AData.Count == 0) { return null; }
-            Account Account = new Account(uint.Parse(AData[0][1]));
+"); // Select Account information where UserID matches
+            if (AData.Count == 0) { return null; } // Check if we have a result
+            Account Account = new Account(uint.Parse(AData[0][1])); // Put the selected data into a new Account object
             Account.Balance = uint.Parse(AData[0][0]);
             return Account;
         }
@@ -46,9 +46,9 @@ WHERE (((Account.UserID)=" + UserId + @"));
             List<string[]> AData = Init.SQLi.ExecuteReader(@"SELECT Account.Balance, Account.UserID
 FROM Account
 WHERE (((Account.AccountID)="+AccountId+@"));
-");
-            if (AData.Count == 0) { return null; }
-            Account Account = new Account(AccountId);
+"); // Select Account information where AccountID matches
+            if (AData.Count == 0) { return null; } // Check if we have a result
+            Account Account = new Account(AccountId); // Put the selected data into a new Account object
             Account.Balance = uint.Parse(AData[0][0]);
             Account.User = User.FromIdChild(uint.Parse(AData[0][1]));
             return Account;
@@ -57,7 +57,7 @@ WHERE (((Account.AccountID)="+AccountId+@"));
         public static Account FromIdChild(uint AccountId)
         {
             Account Account = FromId(AccountId);
-            Account.User = null;
+            Account.User = null; // Prevents a recursive loop where it attempts to keep defining itself in terms of its parent
             return Account;
         }
 
@@ -66,14 +66,14 @@ WHERE (((Account.AccountID)="+AccountId+@"));
             List<string[]> AData = Init.SQLi.ExecuteReader(@"SELECT Account.AccountID, Account.Balance, Account.UserID
 FROM Account
 ORDER BY Account.Balance DESC;
-");
+"); // Select All Account information
             List<Account> Accounts = new List<Account> { };
             foreach (string[] sAccount in AData)
             {
-                Account Account = new Account(uint.Parse(sAccount[0]));
+                Account Account = new Account(uint.Parse(sAccount[0])); // Put the selected data into a new Account object
                 Account.Balance = uint.Parse(sAccount[1]);
                 Account.User = User.FromIdChild(uint.Parse(sAccount[2]));
-                Accounts.Add(Account);
+                Accounts.Add(Account); // Add Account object into the List
             }
             return Accounts.ToArray();
         }
