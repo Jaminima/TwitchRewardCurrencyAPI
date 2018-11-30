@@ -6,11 +6,6 @@ using System.Threading.Tasks;
 
 namespace WebAPI.Backend.Data.Objects
 {
-    class NewAuthToken : BaseObject
-    {
-        public string Token;
-    }
-
     class AuthToken : BaseObject
     {
         public uint TokenId;
