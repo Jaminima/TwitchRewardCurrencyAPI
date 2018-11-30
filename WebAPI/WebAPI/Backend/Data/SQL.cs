@@ -19,30 +19,30 @@ namespace WebAPI.Backend.Data
 
         private void RestartConn()
         {
-            if (Conn != null) { if (Conn.State == System.Data.ConnectionState.Open) { Conn.Close(); } }
-            Conn = new OleDbConnection("Provider = Microsoft.ACE.OLEDB.12.0; Data Source = " + DBase + ".accdb");
+            if (Conn != null) { if (Conn.State == System.Data.ConnectionState.Open) { Conn.Close(); } /* Of connection is open, close it*/ }
+            Conn = new OleDbConnection("Provider = Microsoft.ACE.OLEDB.12.0; Data Source = " + DBase + ".accdb"); // Open a new database connection
             Conn.Open();
         }
 
         public List<String[]> ExecuteReader(String sCommand)
         {
-            OleDbCommand Command = new OleDbCommand(sCommand, Conn);
-            OleDbDataReader Results = Command.ExecuteReader();
-            List<String[]> LResults = new List<string[]> { };
-            while (Results.Read())
+            OleDbCommand Command = new OleDbCommand(sCommand, Conn); // Create the command, using the opened connection ad the sql string parameter
+            OleDbDataReader Results = Command.ExecuteReader(); // Execute the reader and store the result
+            List<String[]> LResults = new List<string[]> { }; // Create a list of String[] too store the rows and collumns of the results
+            while (Results.Read()) // Keep reading untill all is read
             {
-                string[] Data = new string[Results.FieldCount];
-                for (int i = 0; i < Results.FieldCount; i++) { Data[i] = Results.GetValue(i).ToString(); }
-                LResults.Add(Data);
+                string[] Data = new string[Results.FieldCount]; // Create a temporary String[]
+                for (int i = 0; i < Results.FieldCount; i++) { Data[i] = Results.GetValue(i).ToString(); } // Place each collumn in the row into the array
+                LResults.Add(Data); // Add the row to the list
             }
-            Results.Close();
+            Results.Close(); // Terminate read and pass the formatted results back
             return LResults;
         }
 
         public void Execute(String sCommand)
         {
-            OleDbCommand Command = new OleDbCommand(sCommand, Conn);
-            try { Command.ExecuteNonQuery(); /*RestartConn();*/ } catch (Exception E) { Console.WriteLine(E); }
+            OleDbCommand Command = new OleDbCommand(sCommand, Conn); // Create the command, using the opened connection ad the sql string parameter
+            try { Command.ExecuteNonQuery(); /*RestartConn();*/ } catch (Exception E) { Console.WriteLine(E); } // Execute the command
         }
     }
 }

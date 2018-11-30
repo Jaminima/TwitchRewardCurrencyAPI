@@ -8,6 +8,7 @@ namespace WebAPI.Backend.Data.Objects
 {
     class NewAccount : BaseObject
     {
+        // NewAccount does not have an AccountId as it is not at reference to an item in the database
         public uint Balance;
         public User User;
 

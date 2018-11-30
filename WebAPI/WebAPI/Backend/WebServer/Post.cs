@@ -11,7 +11,7 @@ namespace WebAPI.Backend.WebServer
     {
         public static void Handler(HttpListenerContext Context,ref ResponseObject ResponseObject)
         {
-            string[] SegmentedURL = Context.Request.RawUrl.Split("/".ToCharArray());
+            string[] SegmentedURL = Context.Request.RawUrl.Split("/".ToCharArray()); // Split the url at all / so /All/Users becomes {"","All","Users"} so we can reference each position in the url with greater ease
             if (SegmentedURL[1] == "create" && SegmentedURL[2] == "user")
             {
                 if (!Misc.TokenValid(Context, ref ResponseObject)) { return; }

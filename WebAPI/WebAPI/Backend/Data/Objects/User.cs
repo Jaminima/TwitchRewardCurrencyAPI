@@ -8,6 +8,7 @@ namespace WebAPI.Backend.Data.Objects
 {
     class NewUser : BaseObject
     {
+        // NewUser does not have an UserId as it is not at reference to an item in the database
         public string TwitchId, DiscordId;
 
         public static void Save(NewUser NewUser)

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace WebAPI.Backend.Data.Objects
 {
-    public class BaseObject
+    public class BaseObject // The baseobject is inherited by the other objects, so we can have generic functions be shared, reducing code repeats.
     {
         public Newtonsoft.Json.Linq.JToken ToJson()
         {
