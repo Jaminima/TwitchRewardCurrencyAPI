@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Data.OleDb;
 
 namespace WebAPI.Backend.Data.Objects
 {
@@ -20,10 +21,11 @@ namespace WebAPI.Backend.Data.Objects
 
         public static AuthToken FromId(uint TokenId)
         {
+            List<OleDbParameter> Params = new List<OleDbParameter> { new OleDbParameter("TokenID",TokenId) };
             List<String[]> TData = Init.SQLi.ExecuteReader(@"SELECT AuthTokens.AuthTokenID, AuthTokens.RefreshToken, AuthTokens.AuthToken, AuthTokens.AuthTokenCreated
 FROM AuthTokens
-WHERE (((AuthTokens.AuthTokenID)="+TokenId+@"));
-"); // Select AuthToken information where the Id matches
+WHERE (((AuthTokens.AuthTokenID)=@TokenID));
+",Params); // Select AuthToken information where the Id matches
             if (TData.Count == 0) { return null; } // Check if we have a result
             AuthToken AuthToken = new AuthToken(TokenId); // Put the selected data into a new AuthToken object
             AuthToken.RefreshToken = TData[0][1];
@@ -34,10 +36,11 @@ WHERE (((AuthTokens.AuthTokenID)="+TokenId+@"));
 
         public static AuthToken FromRefreshToken(string RefreshToken)
         {
+            List<OleDbParameter> Params = new List<OleDbParameter> { new OleDbParameter("RefreshToken",RefreshToken) };
             List<String[]> TData = Init.SQLi.ExecuteReader(@"SELECT AuthTokens.AuthTokenID, AuthTokens.RefreshToken, AuthTokens.AuthToken, AuthTokens.AuthTokenCreated
 FROM AuthTokens
-WHERE (((AuthTokens.RefreshToken)='" + RefreshToken + @"'));
-"); // Select AuthToken information where RefreshToken matches
+WHERE (((AuthTokens.RefreshToken)=@RefreshToken));
+",Params); // Select AuthToken information where RefreshToken matches
             if (TData.Count == 0) { return null; } // Check if we have a result
             AuthToken AuthToken = new AuthToken(uint.Parse(TData[0][0])); // Put the selected data into a new AuthToken object
             AuthToken.RefreshToken = TData[0][1];
@@ -47,10 +50,11 @@ WHERE (((AuthTokens.RefreshToken)='" + RefreshToken + @"'));
 
         public static bool AuthTokenValid(string AuthorizationToken)
         {
+            List<OleDbParameter> Params = new List<OleDbParameter> { new OleDbParameter("AuthToken",AuthorizationToken) };
             List<String[]> TData = Init.SQLi.ExecuteReader(@"SELECT AuthTokens.AuthTokenID, AuthTokens.RefreshToken, AuthTokens.AuthToken, AuthTokens.AuthTokenCreated
 FROM AuthTokens
-WHERE (((AuthTokens.AuthToken)='"+AuthorizationToken+@"'));
-"); // Select AuthToken information where AuthToken matches
+WHERE (((AuthTokens.AuthToken)=@AuthToken));
+", Params); // Select AuthToken information where AuthToken matches
             if (TData.Count == 0) { return false; } // Check if we have a result
             AuthToken AuthToken = new AuthToken(uint.Parse(TData[0][0])); // Put the selected data into a new AuthToken object
             AuthToken.AuthorizationToken = TData[0][2];
@@ -62,9 +66,11 @@ WHERE (((AuthTokens.AuthToken)='"+AuthorizationToken+@"'));
 
         public static void Update(AuthToken AuthToken)
         {
-            Init.SQLi.Execute(@"UPDATE AuthTokens SET AuthTokens.RefreshToken = '"+RandomString(32)+@"', AuthTokens.AuthToken = '"+RandomString(16)+@"', AuthTokens.AuthTokenCreated = '"+DateTime.Now.ToString()+@"'
-WHERE(((AuthTokens.AuthTokenID) = "+AuthToken.TokenId+@"));
-");
+            List<OleDbParameter> Params = new List<OleDbParameter> { new OleDbParameter("RefreshToken",RandomString(32)),new OleDbParameter("AuthToken",RandomString(16)),
+                new OleDbParameter("AuthTokenCreated",DateTime.Now.ToString()), new OleDbParameter("AuthTokenID",AuthToken.TokenId) };
+            Init.SQLi.Execute(@"UPDATE AuthTokens SET AuthTokens.RefreshToken = @RefreshToken, AuthTokens.AuthToken = @AuthToken, AuthTokens.AuthTokenCreated = @AuthTokenCreated
+WHERE(((AuthTokens.AuthTokenID) = @AuthTokenID));
+", Params);
         }
 
 

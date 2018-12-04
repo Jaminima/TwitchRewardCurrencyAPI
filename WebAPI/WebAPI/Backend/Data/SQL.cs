@@ -24,9 +24,10 @@ namespace WebAPI.Backend.Data
             Conn.Open();
         }
 
-        public List<String[]> ExecuteReader(String sCommand)
+        public List<String[]> ExecuteReader(String sCommand,List<OleDbParameter> ParamCollection=null)
         {
-            OleDbCommand Command = new OleDbCommand(sCommand, Conn); // Create the command, using the opened connection ad the sql string parameter
+            OleDbCommand Command = new OleDbCommand(sCommand, Conn); // Create the command, using the opened connection and the sql string
+            if (ParamCollection != null) { for (int i = 0; i < ParamCollection.Count; i++) { Command.Parameters.Add(ParamCollection[i]); } } // Add the paramaters
             OleDbDataReader Results = Command.ExecuteReader(); // Execute the reader and store the result
             List<String[]> LResults = new List<string[]> { }; // Create a list of String[] too store the rows and collumns of the results
             while (Results.Read()) // Keep reading untill all is read
@@ -39,9 +40,10 @@ namespace WebAPI.Backend.Data
             return LResults;
         }
 
-        public void Execute(String sCommand)
+        public void Execute(String sCommand, List<OleDbParameter> ParamCollection = null)
         {
             OleDbCommand Command = new OleDbCommand(sCommand, Conn); // Create the command, using the opened connection ad the sql string parameter
+            if (ParamCollection != null) { for (int i = 0; i < ParamCollection.Count; i++) { Command.Parameters.Add(ParamCollection[i]); } } // Add the paramaters
             try { Command.ExecuteNonQuery(); /*RestartConn();*/ } catch (Exception E) { Console.WriteLine(E); } // Execute the command
         }
     }
