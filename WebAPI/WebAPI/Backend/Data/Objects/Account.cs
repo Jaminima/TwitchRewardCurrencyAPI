@@ -15,7 +15,8 @@ namespace WebAPI.Backend.Data.Objects
 
         public static void Save(NewAccount NewAccount)
         {
-            List<OleDbParameter> Params = new List<OleDbParameter> { new OleDbParameter("UserID", NewAccount.User.UserId) };
+            List<OleDbParameter> Params = new List<OleDbParameter> {  };
+            if (NewAccount.User.UserId != 0) { Params.Add(new OleDbParameter("UserID", NewAccount.User.UserId)); }
             Init.SQLi.Execute(@"INSERT INTO Account (Balance,UserID) VALUES (0,@UserID);",Params);
         }
     }
