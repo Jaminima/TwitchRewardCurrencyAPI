@@ -45,7 +45,7 @@ namespace WebAPI.Backend.WebServer
             else if (SegmentedURL[1] == "delete" && SegmentedURL[2] == "user")
             {
                 if (SegmentedURL.Length != 4) { ResponseObject.Message = "Missing Parameter"; ResponseObject.Status = 401; return; }
-                try { int.Parse(SegmentedURL[3]); } catch { ResponseObject.Message = "Invalid Parameter"; ResponseObject.Status = 500; return; }
+                try { uint.Parse(SegmentedURL[3]); } catch { ResponseObject.Message = "Invalid Parameter"; ResponseObject.Status = 500; return; }
                 Data.Objects.User User = Data.Objects.User.FromId(uint.Parse(SegmentedURL[3]));
                 if (User == null) { ResponseObject.Message = "User doesnt exist"; ResponseObject.Status = 405; return; }
                 Data.Objects.User.Delete(User);
@@ -56,7 +56,7 @@ namespace WebAPI.Backend.WebServer
             else if (SegmentedURL[1] == "account" && SegmentedURL[2] == "give")
             {
                 if (!Misc.TokenValid(Context,ref ResponseObject)) { return; }
-                try { int.Parse(SegmentedURL[3]); int.Parse(Context.Request.Headers["Value"]); } catch { ResponseObject.Message = "Invalid Parameter"; ResponseObject.Status = 500; return; }
+                try { uint.Parse(SegmentedURL[3]); uint.Parse(Context.Request.Headers["Value"]); } catch { ResponseObject.Message = "Invalid Parameter"; ResponseObject.Status = 500; return; }
                 Data.Objects.User User = Data.Objects.User.FromId(uint.Parse(SegmentedURL[3]));
                 if (User == null) { ResponseObject.Message = "User doesnt exist"; ResponseObject.Status = 405; return; }
                 User.Account.Balance += uint.Parse(Context.Request.Headers["Value"]);
@@ -66,7 +66,7 @@ namespace WebAPI.Backend.WebServer
             else if (SegmentedURL[1] == "account" && SegmentedURL[2] == "take")
             {
                 if (!Misc.TokenValid(Context, ref ResponseObject)) { return; }
-                try { int.Parse(SegmentedURL[3]); int.Parse(Context.Request.Headers["Value"]); } catch { ResponseObject.Message = "Invalid Parameter"; ResponseObject.Status = 500; return; }
+                try { uint.Parse(SegmentedURL[3]); int.Parse(Context.Request.Headers["Value"]); } catch { ResponseObject.Message = "Invalid Parameter"; ResponseObject.Status = 500; return; }
                 Data.Objects.User User = Data.Objects.User.FromId(uint.Parse(SegmentedURL[3]));
                 if (User == null) { ResponseObject.Message = "User doesnt exist"; ResponseObject.Status = 405; return; }
                 uint ChangeBy = uint.Parse(Context.Request.Headers["Value"]);
@@ -78,7 +78,7 @@ namespace WebAPI.Backend.WebServer
             else if (SegmentedURL[1] == "account" && SegmentedURL[2] == "set")
             {
                 if (!Misc.TokenValid(Context, ref ResponseObject)) { return; }
-                try { int.Parse(SegmentedURL[3]); int.Parse(Context.Request.Headers["Value"]); } catch { ResponseObject.Message = "Invalid Parameter"; ResponseObject.Status = 500; return; }
+                try { uint.Parse(SegmentedURL[3]); uint.Parse(Context.Request.Headers["Value"]); } catch { ResponseObject.Message = "Invalid Parameter"; ResponseObject.Status = 500; return; }
                 Data.Objects.User User = Data.Objects.User.FromId(uint.Parse(SegmentedURL[3]));
                 if (User == null) { ResponseObject.Message = "User doesnt exist"; ResponseObject.Status = 405; return; }
                 User.Account.Balance = uint.Parse(Context.Request.Headers["Value"]);

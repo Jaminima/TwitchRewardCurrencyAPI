@@ -85,7 +85,9 @@ ORDER BY Account.Balance DESC;
 
         public static void Update(Account Account)
         {
-            List<OleDbParameter> Params = new List<OleDbParameter> { new OleDbParameter("Balance", Account.Balance), new OleDbParameter("AccountID", Account.AccountId) };
+            List<OleDbParameter> Params = new List<OleDbParameter> { };
+            Params.Add(new OleDbParameter("Balance", Account.Balance));
+            Params.Add(new OleDbParameter("AccountID", Account.AccountId));
             Init.SQLi.Execute(@"UPDATE Account SET Account.Balance = @Balance
 WHERE (((Account.AccountID)=@AccountID));
 ",Params);
