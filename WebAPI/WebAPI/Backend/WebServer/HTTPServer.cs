@@ -33,8 +33,12 @@ namespace WebAPI.Backend.WebServer
             Response.StatusCode = 200; // Indicate the status as 200, ie alive
             Response.ContentType = "application/json"; // Indicate that we will be sending a json
             ResponseObject ResponseObject=new ResponseObject(); // Create an instance of ResponseObject, which will be the main container for the data we will respond with
-            if (Context.Request.HttpMethod == "GET") { Get.Handler(Context,ref ResponseObject); } // Run the Handler, that corresponds to the given method
-            else if (Context.Request.HttpMethod == "POST") { Post.Handler(Context,ref ResponseObject); }
+            try
+            {
+                if (Context.Request.HttpMethod == "GET") { Get.Handler(Context, ref ResponseObject); } // Run the Handler, that corresponds to the given method
+                else if (Context.Request.HttpMethod == "POST") { Post.Handler(Context, ref ResponseObject); }
+            }
+            catch (Exception E) { Console.WriteLine(E); }
             byte[] ByteResponseData = Encoding.UTF8.GetBytes(ResponseObject.ToJson().ToString()); // Convert the ResponseObject to JSON and then to a Byte array
             try // Attempt to send the Response
             {
