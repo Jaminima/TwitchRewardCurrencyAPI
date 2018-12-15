@@ -10,13 +10,11 @@ namespace WebAPI.Backend.Data.Objects
     class NewUser : BaseObject
     {
         // NewUser does not have an UserId as it is not at reference to an item in the database
-        public string TwitchId, DiscordId; // Create propertys to replicate the tables collumns
+        public string TwitchId="", DiscordId=""; // Create propertys to replicate the tables collumns
 
         public static void Save(NewUser NewUser)
         {
-            List<OleDbParameter> Params = new List<OleDbParameter> { };
-            if (NewUser.TwitchId != null) { Params.Add(new OleDbParameter("TwitchID", NewUser.TwitchId)); } else { Params.Add(new OleDbParameter("TwitchID", "")); }
-            if (NewUser.DiscordId != null) { Params.Add(new OleDbParameter("DiscordID", NewUser.DiscordId)); } else { Params.Add(new OleDbParameter("DiscordID", "")); }
+            List<OleDbParameter> Params = new List<OleDbParameter> { new OleDbParameter("TwitchID", NewUser.TwitchId), new OleDbParameter("DiscordID", NewUser.DiscordId) };
             Init.SQLi.Execute(@"INSERT INTO UserData (TwitchID,DiscordID) VALUES (@TwitchID,@DiscordID)",Params);
             NewAccount NewAccount = new NewAccount();
             NewAccount.Balance = 0; NewAccount.User = User.FromNewUser(NewUser);
@@ -36,9 +34,9 @@ namespace WebAPI.Backend.Data.Objects
         {
             List<OleDbParameter> Params = new List<OleDbParameter> { };
             string WhereString = "";
-            if (NewUser.TwitchId != null) { WhereString += @"((UserData.TwitchID) = @TwitchID)"; Params.Add(new OleDbParameter("TwitchID", NewUser.TwitchId)); } // The Where statment must change based on if we have one or both of the Discord/Twitch ids
-            if (NewUser.TwitchId != null && NewUser.DiscordId != null) { WhereString += " AND "; } // As we need it to only return data where both match, if both are given
-            if (NewUser.DiscordId != null) { WhereString += @"((UserData.DiscordID)= @DiscordID)"; Params.Add(new OleDbParameter("DiscordID", NewUser.DiscordId)); }
+            if (NewUser.TwitchId != "") { WhereString += @"((UserData.TwitchID) = @TwitchID)"; Params.Add(new OleDbParameter("TwitchID", NewUser.TwitchId)); } // The Where statment must change based on if we have one or both of the Discord/Twitch ids
+            if (NewUser.TwitchId != "" && NewUser.DiscordId != "") { WhereString += " AND "; } // As we need it to only return data where both match, if both are given
+            if (NewUser.DiscordId != "") { WhereString += @"((UserData.DiscordID)= @DiscordID)"; Params.Add(new OleDbParameter("DiscordID", NewUser.DiscordId)); }
             List<String[]> UData = Init.SQLi.ExecuteReader(@"SELECT UserData.UserID,UserData.TwitchID,UserData.DiscordID
 FROM UserData
 WHERE ( " + WhereString+@" );
@@ -90,25 +88,26 @@ FROM UserData;
             return Users.ToArray();
         }
 
-        public static bool UserExists(string TwitchId=null,string DiscordId=null,uint Id=0)
+        public static bool UserExists(string TwitchId="",string DiscordId="",uint Id=0)
         {
-            List<OleDbParameter> Params = new List<OleDbParameter> { };
-            if (Id != 0) { Params.Add(new OleDbParameter("UserID", Id)); }
-            if (TwitchId != null) { Params.Add(new OleDbParameter("TwitchID", TwitchId)); }
-            if (DiscordId != null) { Params.Add(new OleDbParameter("DiscordID", DiscordId)); }
+            List<OleDbParameter> Params = new List<OleDbParameter> { new OleDbParameter("TwitchID", TwitchId), new OleDbParameter("DiscordID", DiscordId), new OleDbParameter("UserID", Id) };
+            if (Id != 0) {  }
             List<String[]> UData = Init.SQLi.ExecuteReader(@"SELECT UserData.UserID, UserData.TwitchID, UserData.DiscordID
 FROM UserData
-WHERE (((UserData.UserID)=@UserID)) AND (((UserData.TwitchID)=@TwitchID)) AND (((UserData.DiscordID)=@DiscordID));
-",Params);
+WHERE (((UserData.UserID)=@UserID)) OR (((UserData.TwitchID)=@TwitchID) AND ((UserData.DiscordID)=@DiscordID));
+", Params);
             return UData.Count != 0;
         }
 
         public static void Update(User User)
         {
             List<OleDbParameter> Params = new List<OleDbParameter> { };
-            if (User.TwitchId != null) { Params.Add(new OleDbParameter("TwitchID", User.TwitchId)); }
-            if (User.DiscordId != null) { Params.Add(new OleDbParameter("DiscordID", User.DiscordId)); }
-            Init.SQLi.Execute(@"UPDATE UserData SET UserData.TwitchID = @TwitchID, UserData.DiscordID = @DiscordID
+            string SetStatment = "";
+            if (User.TwitchId != null) { Params.Add(new OleDbParameter("TwitchID", User.TwitchId)); SetStatment += "UserData.TwitchID = @TwitchID"; }
+            if (User.TwitchId !=null && User.DiscordId != null) { SetStatment += ","; }
+            if (User.DiscordId != null) { Params.Add(new OleDbParameter("DiscordID", User.DiscordId)); SetStatment += "UserData.DiscordID = @DiscordID"; }
+            Params.Add(new OleDbParameter("UserID", User.UserId));
+            Init.SQLi.Execute(@"UPDATE UserData SET "+SetStatment+@"
 WHERE(((UserData.UserID) = @UserID));
 ",Params);
         }

@@ -16,8 +16,8 @@ namespace WebAPI.Backend.WebServer
             {
                 if (!Misc.TokenValid(Context, ref ResponseObject)) { return; }
                 Data.Objects.NewUser NewUser = new Data.Objects.NewUser();
-                NewUser.DiscordId = Context.Request.Headers["DiscordId"];
-                NewUser.TwitchId = Context.Request.Headers["TwitchId"];
+                if (Context.Request.Headers["DiscordId"]!=null) NewUser.DiscordId = Context.Request.Headers["DiscordId"];
+                if (Context.Request.Headers["TwitchId"]!=null) NewUser.TwitchId = Context.Request.Headers["TwitchId"];
                 if (Data.Objects.User.UserExists(NewUser.TwitchId, NewUser.DiscordId)) { ResponseObject.Message = "A User Already Exists"; ResponseObject.Status = 505; return; }
                 Data.Objects.NewUser.Save(NewUser);
                 ResponseObject.Message = "Created User"; ResponseObject.Status = 200;
@@ -25,8 +25,8 @@ namespace WebAPI.Backend.WebServer
             else if (SegmentedURL[1]=="user")
             {
                 Data.Objects.NewUser NewUser = new Data.Objects.NewUser();
-                NewUser.DiscordId = Context.Request.Headers["DiscordId"];
-                NewUser.TwitchId = Context.Request.Headers["TwitchId"];
+                if (Context.Request.Headers["DiscordId"] != null) NewUser.DiscordId = Context.Request.Headers["DiscordId"];
+                if (Context.Request.Headers["TwitchId"] != null) NewUser.TwitchId = Context.Request.Headers["TwitchId"];
                 Data.Objects.User User = Data.Objects.User.FromNewUser(NewUser);
                 if (User == null) { ResponseObject.Message = "User doesnt exist"; ResponseObject.Status = 405; return; }
                 ResponseObject.Data = User.ToJson();
