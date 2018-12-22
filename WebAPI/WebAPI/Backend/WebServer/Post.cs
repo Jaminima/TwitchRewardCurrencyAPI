@@ -18,6 +18,7 @@ namespace WebAPI.Backend.WebServer
                 Data.Objects.NewUser NewUser = new Data.Objects.NewUser();
                 if (Context.Request.Headers["DiscordId"]!=null) NewUser.DiscordId = Context.Request.Headers["DiscordId"];
                 if (Context.Request.Headers["TwitchId"]!=null) NewUser.TwitchId = Context.Request.Headers["TwitchId"];
+                if (!Data.Checks.IsValidID(NewUser.DiscordId) || Data.Checks.IsValidID(NewUser.TwitchId)) { ResponseObject.Message = "Invalid ID"; ResponseObject.Status = 506; }
                 if (Data.Objects.User.UserExists(NewUser.TwitchId, NewUser.DiscordId)) { ResponseObject.Message = "A User Already Exists"; ResponseObject.Status = 505; return; }
                 Data.Objects.NewUser.Save(NewUser);
                 ResponseObject.Message = "Created User"; ResponseObject.Status = 200;
